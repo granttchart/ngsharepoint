@@ -59,28 +59,68 @@
     
     })
     
-    .service('ngSharePoint', function(SharePointRequest) {
-    	this.config = function(params) {
- 	    	apiBaseUL : params.apiBaseURL 	    	
- 	    };
-    	
-	    this.get = function(params) {
-	    	return SharePointRequest.doSharePointRequest(params);
-	    };
-	    
-	    this.getUserEmail = function() {
-			return SharePointRequest.doSharePointRequest({
-				URL: 'web/currentuser'
-			});
-	    };
-	   
-	    this.getFormDigest = function(params) {
-	    	return SharePointRequest.doSharePointRequest({
-    			intent: 'formdigest',
-    			URL: 'contextinfo'
-    		});
-	    };
+        .factory('ngSharePoint', function(SharePointRequest) {
+        	 return {
+        		get: function(params) {
+        			return SharePointRequest.doSharePointRequest(params).then(function(response) {
+    	                return response.data.d.results;
+    	            });
+     		    	},
+     		    
+     		    getItem: function(params) {
+    		    	return SharePointRequest.doSharePointRequest(params).then(function(response) {
+   	                return response.data.d;
+   	                });
+    		    	},
+    		    	
+         		updateListItem: function(params) {
+         		    return SharePointRequest.doSharePointRequest({
+         		    	URL: params.URL,
+         		    	intent: 'update',
+         		    	data: params.data,
+         		    	formDigest: params.formDigest
+         		    }).then(function(response) {
+         		    	return response;
+       	             });
+        		   	 },
+    		    	
+     		   getUserName: function() {
+        			return SharePointRequest.doSharePointRequest({
+        				URL: 'web/currentuser'
+        					}).then(function(response) {
+        						return response.data.d.Title;
+        				});
+        			 },
 
-    })
-    
+        	   getUserEmail: function() {
+        			 return SharePointRequest.doSharePointRequest({
+        					URL: 'web/currentuser'
+        				}).then(function(response) {
+        	                return response.data.d.Email;
+        	            });
+        	        },
+        	   
+        	   getFormDigest: function(params) {
+        		    	return SharePointRequest.doSharePointRequest({
+        	    			intent: 'formdigest',
+        	    			URL: 'contextinfo'
+        	    		}).then(function(response) {
+        	                return {
+        	                	formDigest: response.data.d.GetContextWebInformation.FormDigestValue,
+        	                	formDigestExpiry: response.data.d.GetContextWebInformation.FormDigestTimeoutSeconds
+        	                }
+        	            });
+        		    }
+       
+        	    };
+        })
+        
+        .filter('cleanSystemName', function() {
+        	return function(item) {
+        		if (item) {
+        			var name = item.split(',');
+        			return name[1] + ' ' + name[0];
+        		}
+        	}
+        })
 }));
