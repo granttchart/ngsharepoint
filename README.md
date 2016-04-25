@@ -58,7 +58,8 @@ Note: Create, Update, and Delete actions require a form digest.
               URL: "web/lists(guid'2F7B91BC-90F1-47E7-901A-71300161F60C')/items",
               data: JSON.stringify({ '__metadata': { 'type': 'SP.Data.MyListListItem' },
             	  'myDataKey': myDataValue,
-            	  'mySecondDataKey': mySecondDataValue})
+            	  'mySecondDataKey': mySecondDataValue}),
+              formDigest: sessionFormDigest
             }).then(function() {
               //handle successful add
             }).catch(function(problemo) {
@@ -71,7 +72,7 @@ Note: Create, Update, and Delete actions require a form digest.
 		ngSharePoint.updateListItem({
 			URL: "web/lists(guid'2F7B91BC-90F1-47E7-901A-71300161F60C')/items("+ id +")",
 			data: JSON.stringify({ '__metadata': { 'type': 'SP.Data.MyListListItem' }, 'myDataKey': myDataValue}),
-			formDigest: $scope.formDigest
+			formDigest: sessionFormDigest
 		}).then(function(response) {
 		  //handle successful update
 		}).catch(function(problemo) {
@@ -83,7 +84,7 @@ Note: Create, Update, and Delete actions require a form digest.
 
 		ngSharePoint.deleteListItem({
 			URL: "web/lists(guid'2F7B91BC-90F1-47E7-901A-71300161F60C')/items("+ id +")",
-			formDigest: $scope.formDigest
+			formDigest: sessionFormDigest
 		}).then(function(response) {
 		  //handle successful delete
 		}).catch(function(problemo) {
