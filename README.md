@@ -51,7 +51,7 @@ ngsharepoint extends Angular's $http service to make CRUD actions via SharePoint
         });
 
 ## Create New List Item
-Note: Create and Delete actions require a form digest.
+Note: Create, Update, and Delete actions require a form digest.
 
         ngSharePoint.addListItem({
               formDigest: sessionFormDigest,
@@ -66,6 +66,7 @@ Note: Create and Delete actions require a form digest.
             });
 
 ## Update List Item
+Note: Create, Update, and Delete actions require a form digest.
 
 		ngSharePoint.updateListItem({
 			URL: "web/lists(guid'2F7B91BC-90F1-47E7-901A-71300161F60C')/items("+ id +")",
@@ -76,6 +77,18 @@ Note: Create and Delete actions require a form digest.
 		}).catch(function(problemo) {
 			//deal with errors
 		});
+		
+## Delete List Item
+Note: Create, Update, and Delete actions require a form digest.
+
+		ngSharePoint.deleteListItem({
+			URL: "web/lists(guid'2F7B91BC-90F1-47E7-901A-71300161F60C')/items("+ id +")",
+			formDigest: $scope.formDigest
+		}).then(function(response) {
+		  //handle successful delete
+		}).catch(function(problemo) {
+		  //deal with errors
+		});		
 
 ## Filter: Reformat Active Directory Name
 Use the `cleanSystemName` filter in a user name variable to reformat an Active Directory name from "Doe, John H" to "John H Doe".
