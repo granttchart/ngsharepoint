@@ -1,2 +1,2 @@
 # ngsharepoint
-ngsharepoint makes writing Angular apps for SharePoint fast and fun.
+ngsharepoint makes making SharePoint REST requests with Angular apps breezier.
