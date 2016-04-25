@@ -1,6 +1,11 @@
+//fix attachEvent error on SharePoint pages
+if (typeof browseris !== 'undefined') {
+	browseris.ie = false;
+}
+
 (function (root, factory) {
   'use strict';
-  
+
   if (typeof define === 'function' && define.amd) {
     define(['angular'], factory);
   } else if (root.hasOwnProperty('angular')) {
@@ -41,6 +46,16 @@
     			defaults.headers = angular.extend({}, addHeaders, defaults.headers);
     		}
 
+				if (params.intent === 'delete') {
+					defaults.method = 'DELETE';
+					var addHeaders = {
+						'X-HTTP-Method': 'DELETE',
+						'IF-MATCH': '*',
+						'X-RequestDigest': params.formDigest
+					};
+					defaults.headers = angular.extend({}, addHeaders, defaults.headers);
+				}
+
     		if (params.intent === 'formdigest') {
     			defaults.method = 'POST';
     			var addHeaders = {};
@@ -48,7 +63,7 @@
     		}
 
     		var opts = angular.merge({}, defaults, params);
-    		
+
     		return $http({
     			method: opts.method,
     			url: apiBaseURL + params.URL,
@@ -56,23 +71,36 @@
     			data: opts.data
     		});
     	};
-    
+
     })
-    
-        .factory('ngSharePoint', function(SharePointRequest) {
+
+		.factory('ngSharePoint', function(SharePointRequest) {
         	 return {
         		get: function(params) {
-        			return SharePointRequest.doSharePointRequest(params).then(function(response) {
+        			return SharePointRequest.doSharePointRequest(params)
+        			.then(function(response) {
     	                return response.data.d.results;
-    	            });
+    	            	});
      		    	},
-     		    
+
      		    getItem: function(params) {
-    		    	return SharePointRequest.doSharePointRequest(params).then(function(response) {
-   	                return response.data.d;
-   	                });
+    		    	return SharePointRequest.doSharePointRequest(params)
+    		    	.then(function(response) {
+    		    		return response.data.d;
+   	                	});
     		    	},
-    		    	
+
+		    		addListItem: function(params) {
+         		    return SharePointRequest.doSharePointRequest({
+         		    	URL: params.URL,
+         		    	intent: 'add',
+         		    	data: params.data,
+         		    	formDigest: params.formDigest
+         		    }).then(function(response) {
+         		    	return response;
+       	             	});
+        		   	 },
+
          		updateListItem: function(params) {
          		    return SharePointRequest.doSharePointRequest({
          		    	URL: params.URL,
@@ -81,15 +109,26 @@
          		    	formDigest: params.formDigest
          		    }).then(function(response) {
          		    	return response;
-       	             });
+       	             	});
         		   	 },
-    		    	
-     		   getUserName: function() {
+
+					 deleteListItem: function(params) {
+							 return SharePointRequest.doSharePointRequest({
+								 URL: params.URL,
+								 intent: 'delete',
+								 data: params.data,
+								 formDigest: params.formDigest
+							 }).then(function(response) {
+								 return response;
+										 });
+								},
+
+     		   	getUserName: function() {
         			return SharePointRequest.doSharePointRequest({
         				URL: 'web/currentuser'
-        					}).then(function(response) {
-        						return response.data.d.Title;
-        				});
+        			}).then(function(response) {
+        				return response.data.d.Title.toLowerCase();
+        			});
         			 },
 
         	   getUserEmail: function() {
@@ -99,7 +138,7 @@
         	                return response.data.d.Email;
         	            });
         	        },
-        	   
+
         	   getFormDigest: function(params) {
         		    	return SharePointRequest.doSharePointRequest({
         	    			intent: 'formdigest',
@@ -111,15 +150,14 @@
         	                }
         	            });
         		    }
-       
         	    };
         })
-        
+
         .filter('cleanSystemName', function() {
         	return function(item) {
         		if (item) {
         			var name = item.split(',');
-        			return name[1] + ' ' + name[0];
+        			return $.trim(name[1] + ' ' + name[0]);
         		}
         	}
         })
