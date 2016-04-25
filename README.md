@@ -8,8 +8,10 @@ ngsharepoint extends Angular's $http service to make CRUD actions via SharePoint
 3. Declare a global apiBaseURL variable as a default prefix to all REST requests:
     `var apiBaseURL = 'http://mysite/_api/';`
 
-# Helper Functions
+#Potential Caveats
+Currently, this module has only been tested in an on-premise installation of SharePoint 2013 with JSON light disabled.
 
+# Helper Functions
 ## Get a List Item
 		ngSharePoint.getItem({
 			URL: "web/lists(guid'2F7B91BC-90F1-47E7-901A-71300161F60C')/items("+ id +")"
