@@ -36,8 +36,8 @@ ngsharepoint extends Angular's $http service to make CRUD actions via SharePoint
 	    });
 	    
 ## Get Current User Name
-	    ngSharePoint.getUserEmail().then(function(response) {
-	      var userEmail = response;
+	    ngSharePoint.getUserName().then(function(response) {
+	      var userName = response;
 	    }).catch(function(problemo) {
 	    	//deal with errors
 	    });
